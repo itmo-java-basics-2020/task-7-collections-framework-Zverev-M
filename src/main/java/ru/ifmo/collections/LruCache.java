@@ -1,5 +1,8 @@
 package ru.ifmo.collections;
 
+import java.util.ArrayDeque;
+import java.util.HashMap;
+
 /**
  * Represents LRU cache with fixed maximum capacity.
  *
@@ -11,19 +14,42 @@ package ru.ifmo.collections;
  * Implementing this cache in (almost) the same manner as it was implemented during the lecture will result in extra points.
  */
 public class LruCache<K, V> {
+    private int capacity;
+    private HashMap<K, V> hashMap;
+    private ArrayDeque<K> queue;
+
     public LruCache(int capacity) {
-        // TODO implement
+        this.capacity = capacity;
+        hashMap = new HashMap<K, V>();
+        queue = new ArrayDeque<K>();
     }
 
     public V get(K key) {
-        throw new UnsupportedOperationException(); // TODO implement
+        if (!queue.contains(key)) {
+            return null;
+        } else {
+            addToStory(key);
+            return hashMap.get(key);
+        }
     }
 
     public void put(K key, V value) {
-        // TODO implement
+        addToStory(key);
+        hashMap.put(key, value);
     }
 
     public int elements() {
-        throw new UnsupportedOperationException(); // TODO implement
+        return queue.size();
+    }
+
+    private void addToStory(K key) {
+        if (queue.contains(key)) {
+            queue.remove(key);
+        }
+
+        queue.add(key);
+        if (queue.size() > capacity) {
+            hashMap.remove(queue.poll());
+        }
     }
 }
